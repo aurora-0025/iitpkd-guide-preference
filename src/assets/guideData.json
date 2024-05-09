@@ -1,0 +1,82 @@
+[
+    {
+      "id": 0,
+      "name": "Prof. Jagadeesh Bayry",
+      "dept_id": 0,
+      "dept": "Biological Sciences and Engineering",
+      "specialization": "Biomedical Engineering",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Jagdish%20Bayry.jpg?itok=eimnyY8X"
+    },
+    {
+      "id": 1,
+      "name": "Dr. Abdul Rasheed P",
+      "dept_id": 0,
+      "dept": "Biological Sciences and Engineering",
+      "specialization": "Bioinformatics",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Abdul%20Rasheed%20P.jpg?itok=rfSxHzA0"
+    },
+    {
+      "id": 2,
+      "name": "Debarati Chatterjee",
+      "dept_id": 1,
+      "dept": "Chemistry",
+      "specialization": "Organic Chemistry",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Debarati%20Chatterji.jpg?itok=gVQgRsDV"
+    },
+    {
+      "id": 3,
+      "name": "Dinesh Jagadeesan",
+      "dept_id": 1,
+      "dept": "Chemistry",
+      "specialization": "Physical Chemistry",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Dinesh%20Jagadeeshan.jpg?itok=cX7u949v"
+    },
+    {
+      "id": 4,
+      "name": "Ankesh Kumar",
+      "dept_id": 2,
+      "dept": "Civil Engineering",
+      "specialization": "Structural Engineering",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Ankesh_0.jpg?itok=qPIEnZS5"
+    },
+    {
+      "id": 5,
+      "name": "Arun C O",
+      "dept_id": 2,
+      "dept": "Civil Engineering",
+      "specialization": "Transportation Engineering",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Arun%20CO.jpg?itok=xVc72mWu"
+    },
+    {
+      "id": 6,
+      "name": "Albert Sunny",
+      "dept_id": 3,
+      "dept": "Computer Science & Engineering",
+      "specialization": "Artificial Intelligence",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Albert%20sunny.jpg?itok=UnzPlJYQ"
+    },
+    {
+      "id": 7,
+      "name": "Sandeep Chandran",
+      "dept_id": 3,
+      "dept": "Computer Science & Engineering",
+      "specialization": "Machine Learning",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Sandeep%20Chandran.jpg?itok=SDT-8i9i"
+    },
+    {
+      "id": 8,
+      "name": "Koninika Pal",
+      "dept_id": 4,
+      "dept": "Data Science",
+      "specialization": "Big Data Analytics",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Koninika%20Pal.jpg?itok=cWDdDWmM"
+    },
+    {
+      "id": 9,
+      "name": "Mrinal Kanti Das",
+      "dept_id": 4,
+      "dept": "Data Science",
+      "specialization": "Data Visualization",
+      "imgUrl": "https://www.iitpkd.ac.in/sites/default/files/styles/with_scale_/public/pictures/2023-02/Mrinal%20Kanti%20Das.jpg?itok=mRQGum04"
+    }
+]

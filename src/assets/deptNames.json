@@ -1,0 +1,8 @@
+[
+    { "id": 0, "name": "Biological Sciences and Engineering" },
+    { "id": 1, "name": "Chemistry" },
+    { "id": 2, "name": "Civil Engineering" },
+    { "id": 3, "name": "Computer Science & Engineering" },
+    { "id": 4, "name": "Data Science" },
+    { "id": 5, "name": "Electrical Engineering" }
+]

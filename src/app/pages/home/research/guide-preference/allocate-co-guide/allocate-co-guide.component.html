@@ -1,0 +1,422 @@
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a class="text-decoration-none" [routerLink]="'/'">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a class="text-decoration-none" [routerLink]="'/research'">Research</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a
+        class="text-decoration-none"
+        [routerLink]="'/research/guide-preference'"
+        >Guide Preference</a
+      >
+    </li>
+    <li class="breadcrumb-item active text-primary" aria-current="page">
+      Allocate Co Guide
+    </li>
+  </ol>
+</nav>
+<div class="container">
+  @if (selectedStudent?.coGuide) {
+  <ngb-alert
+    type="success"
+    [dismissible]="true"
+    (closed)="selectedStudent = undefined"
+  >
+    Successfully Allocated Co Guide for {{ selectedStudent?.name }}
+  </ngb-alert>
+  }
+  <div class="card p-3">
+    <form class="row">
+      <fieldset class="col col-sm-9">
+          <div class="row px-2 py-1">
+              <label for="studentId" class="col-sm-3 col-form-label">Student ID</label>
+              <div class="col-sm-9">
+                  <input type="text" class="form-control" id="studentId" aria-describedby="studentId" placeholder="Enter Student ID" [formControl]="studentIDFilter">
+              </div>
+          </div>
+          <div class="row px-2 py-1">
+              <label for="studentName" class="col-sm-3 col-form-label">Student Name</label>
+              <div class="col-sm-9">
+                  <input type="text" class="form-control" id="studentName" aria-describedby="studentName" placeholder="Enter Student Name" [formControl]="studentNameFilter">
+              </div>
+          </div>
+      </fieldset>
+      <fieldset class="col col-sm-3 align-self-center">
+          <button type="button" class="btn btn-outline-primary w-100" (click)="search()">Search</button>
+      </fieldset>
+    </form>
+    <div class="card my-3">
+      <div class="card-header text-center">PENDING CO-GUIDE ALLOCATION</div>
+      <div class="p-2">
+        <table class="table table-hover">
+          <thead>
+            <tr class="table-primary">
+              <th scope="col">StudentId</th>
+              <th scope="col">Student Name</th>
+              <th scope="col">Department</th>
+              <th scope="col">Guide</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of filteredStudents; track student.id; let i = $index)
+            {
+            <tr (click)="open(content, student.id)">
+              <td>
+                {{ student.id }}
+              </td>
+              <td>
+                {{ student.name }}
+              </td>
+              <td>{{ student.dept }}</td>
+              <td>
+                <a class="btn-link link-info" href="">{{
+                  student.allocatedGuide?.name
+                }}</a>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" style="text-align: center">No students found</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-header">
+        <div
+          class="d-flex flex-column-reverse gap-3 flex-sm-row justify-content-between align-items-center"
+        >
+          <div class="flex-grow-1">
+            <p>
+              Student Id: <span>{{ selectedStudent?.id }}</span>
+            </p>
+            <p>
+              Student Name: <span>{{ selectedStudent?.name }}</span>
+            </p>
+            <p>
+              Student Dept: <span>{{ selectedStudent?.dept }}</span>
+            </p>
+            <p>
+              Guide: <span>{{ selectedStudent?.allocatedGuide?.name }}</span>
+            </p>
+            <p>
+              Guide's Specialization:
+              <span>{{ selectedStudent?.allocatedGuide?.specialization }}</span>
+            </p>
+          </div>
+          <div>
+            <img
+              style="width: 80px; height: 100px"
+              [src]="
+                selectedStudent?.imgUrl ??
+                'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'
+              "
+              alt="{{ selectedStudent?.name }}"
+              srcset=""
+            />
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="container">
+          <h5>Find Possible Co-Guide</h5>
+          <div class="form-check">
+            <label class="form-check-label" for="externalCheckbox">
+              External
+            </label>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="externalCheckbox"
+              (ngModelChange)="onExternalChange($event)"
+              [(ngModel)]="isExternal"
+            />
+          </div>
+          <form [formGroup]="isExternal ? externalCoGuideForm : coGuideForm">
+            @if (isExternal) {
+            <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+              <div class="col-sm-4">
+                <label class="control-label col-sm-12" for="externalName"
+                  >Name of external:</label
+                >
+              </div>
+              <div class="col">
+                <input
+                  class="form-control"
+                  id="externalName"
+                  formControlName="name"
+                  type="text"
+                />
+                @if (externalCoGuideForm.get("name")?.invalid && (formSubmitted
+                || externalCoGuideForm.get("name")?.touched ||
+                externalCoGuideForm.get("name")?.dirty)) {
+                <div class="text-danger">Required</div>
+                }
+              </div>
+            </div>
+            <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+              <div class="col-sm-4">
+                <label class="control-label col-sm-12" for="externalOrgName"
+                  >Organization Name:</label
+                >
+              </div>
+              <div class="col">
+                <input
+                  class="form-control"
+                  id="externalOrgName"
+                  formControlName="organization_name"
+                  type="text"
+                />
+                @if (externalCoGuideForm.get("organization_name")?.invalid &&
+                (formSubmitted ||
+                externalCoGuideForm.get("organization_name")?.touched ||
+                externalCoGuideForm.get("organization_name")?.dirty)) {
+                <div class="text-danger">Required</div>
+                }
+              </div>
+            </div>
+            <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+              <div class="col-sm-4">
+                <label class="control-label col-sm-12" for="externalJobTitle"
+                  >Job Title:</label
+                >
+              </div>
+              <div class="col">
+                <input
+                  class="form-control"
+                  id="externalJobTitle"
+                  formControlName="job_title"
+                  type="text"
+                />
+                @if (externalCoGuideForm.get("job_title")?.invalid &&
+                (formSubmitted || externalCoGuideForm.get("job_title")?.touched
+                || externalCoGuideForm.get("job_title")?.dirty)) {
+                <div class="text-danger">Required</div>
+                }
+              </div>
+            </div>
+            <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+              <div class="col-sm-4">
+                <label class="control-label col-sm-12" for="externalExperience"
+                  >Experience in Years:</label
+                >
+              </div>
+              <div class="col">
+                <input
+                  class="form-control"
+                  id="externalExperience"
+                  formControlName="years_of_experience"
+                  type="number"
+                />
+                @if (externalCoGuideForm.get("years_of_experience")?.invalid &&
+                (formSubmitted ||
+                externalCoGuideForm.get("years_of_experience")?.touched ||
+                externalCoGuideForm.get("years_of_experience")?.dirty)) {
+                <div class="text-danger">Required</div>
+                }
+              </div>
+            </div>
+            <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+              <div class="col-sm-4">
+                <label
+                  class="control-label col-sm-12"
+                  for="externalSpecialization"
+                  >External's specialization:</label
+                >
+              </div>
+              <div class="col">
+                <input
+                  class="form-control"
+                  id="externalSpecialization"
+                  formControlName="specialization"
+                  type="text"
+                />
+                @if (externalCoGuideForm.get("specialization")?.invalid &&
+                (formSubmitted ||
+                externalCoGuideForm.get("specialization")?.touched ||
+                externalCoGuideForm.get("specialization")?.dirty)) {
+                <div class="text-danger">Required</div>
+                }
+              </div>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label" for="externalPhdCheckbox">
+                External is not phd
+              </label>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="externalPhdCheckbox"
+                formControlName="isPhd"
+              />
+            </div>
+            } @if (!isExternal || (isExternal &&
+            externalCoGuideForm.get('isPhd')?.value)) {
+            <div class="col">
+              <div
+                ngbDropdown
+                #guideDropDown="ngbDropdown"
+                class="d-inline-block"
+              >
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  id="dropdown"
+                  ngbDropdownToggle
+                >
+                  {{
+                    isExternal
+                      ? getGuideById(
+                          this.externalCoGuideForm.get("possibleCoGuide")?.value
+                        )?.name ?? "Choose Possible Co Guide"
+                      : getGuideById(
+                          this.coGuideForm.get("possibleCoGuide")?.value
+                        )?.name ?? "Choose Co Guide"
+                  }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="dropdownForm"
+                  style="
+                    max-height: 300px;
+                    overflow-y: scroll;
+                    overflow-x: hidden;
+                    padding: 0;
+                    margin: 0;
+                  "
+                >
+                  <div class="card">
+                    <form class="card-header">
+                      <div class="mb-3 row">
+                        <label
+                          for="table-filtering-search"
+                          class="col-xs-3 col-sm-3 col-form-label"
+                          >Search:</label
+                        >
+                        <div class="col-xs-3 col-sm-auto">
+                          <input
+                            id="table-filtering-search"
+                            class="form-control"
+                            type="text"
+                            [formControl]="filter"
+                          />
+                        </div>
+                      </div>
+                    </form>
+                    <div class="card-body">
+                      <table
+                        class="table table-hover table-bordered align-middle"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Dept Id</th>
+                            <th scope="col">Dept Name</th>
+                            <th scope="col">Specialization</th>
+                            <th scope="col">Profile Pic</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (guide of filteredGuides; track guide.id; let i =
+                          $index) { @if (guide.id != selectedGuide?.id) {
+                          <tr
+                            (click)="
+                              guideSelect(guide.id); guideDropDown.close()
+                            "
+                          >
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>
+                              <ngb-highlight
+                                [result]="guide.name"
+                                [term]="filter.value"
+                              />
+                            </td>
+                            <td>
+                              <ngb-highlight
+                                [result]="guide.dept_id | number"
+                                [term]="filter.value"
+                              />
+                            </td>
+                            <td>
+                              <ngb-highlight
+                                [result]="guide.dept"
+                                [term]="filter.value"
+                              />
+                            </td>
+                            <td>
+                              {{ guide.specialization }}
+                            </td>
+                            <td>
+                              <img
+                                class="col-12"
+                                [src]="guide.imgUrl + '?u=' + guide.id"
+                                alt="{{ guide.name }}"
+                              />
+                            </td>
+                          </tr>
+                          } } @empty {
+                          <tr>
+                            <td colspan="4" style="text-align: center">
+                              No guides found
+                            </td>
+                          </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              @if (isExternal) {
+              @if(externalCoGuideForm.get("possibleCoGuide")?.invalid &&
+              (formSubmitted ||
+              externalCoGuideForm.get("possibleCoGuide")?.touched ||
+              externalCoGuideForm.get("possibleCoGuide")?.dirty)) {
+              <div class="text-danger">Required</div>
+              } } @else { @if (coGuideForm.get("possibleCoGuide")?.invalid &&
+              (formSubmitted || coGuideForm.get("possibleCoGuide")?.touched ||
+              coGuideForm.get("possibleCoGuide")?.dirty)) {
+              <div class="text-danger">Required</div>
+              } }
+            </div>
+            }
+            <div class="mt-5">
+              <button
+                type="submit"
+                (click)="onSubmit()"
+                class="btn btn-primary"
+              >
+                Allocate
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="modal-footer">
+        @if (selectGuideForm.get("guide")?.invalid && (formSubmitted ||selectGuideForm.get("guide")?.touched)) {
+          <div class="text-danger">Choose Atleast One Guide</div>
+        }
+        <button type="submit" class="btn btn-outline-primary" (click)="allocateGuide()">Allocate</button>
+      </div> -->
+</ng-template>

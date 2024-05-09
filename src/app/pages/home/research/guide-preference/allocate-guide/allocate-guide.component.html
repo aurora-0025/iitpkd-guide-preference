@@ -1,0 +1,124 @@
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a class="text-decoration-none" [routerLink]="'/'">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a class="text-decoration-none" [routerLink]="'/research'">Research</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a
+        class="text-decoration-none"
+        [routerLink]="'/research/guide-preference'"
+        >Guide Preference</a
+      >
+    </li>
+    <li class="breadcrumb-item active text-primary" aria-current="page">
+      Allocate Guide
+    </li>
+  </ol>
+</nav>
+<div class="container">
+  @if (selectedStudent?.allocatedGuide) {
+    <ngb-alert type="success" [dismissible]="true" (closed)="selectedStudent = undefined"> Successfully Allocated Guide for {{selectedStudent?.name}} </ngb-alert>
+  }
+  <div class="card p-3">
+    <form class="row">
+      <fieldset class="col col-sm-9">
+          <div class="row px-2 py-1">
+              <label for="studentId" class="col-sm-3 col-form-label">Student ID</label>
+              <div class="col-sm-9">
+                  <input type="text" class="form-control" id="studentId" aria-describedby="studentId" placeholder="Enter Student ID" [formControl]="studentIDFilter">
+              </div>
+          </div>
+          <div class="row px-2 py-1">
+              <label for="studentName" class="col-sm-3 col-form-label">Student Name</label>
+              <div class="col-sm-9">
+                  <input type="text" class="form-control" id="studentName" aria-describedby="studentName" placeholder="Enter Student Name" [formControl]="studentNameFilter">
+              </div>
+          </div>
+      </fieldset>
+      <fieldset class="col col-sm-3 align-self-center">
+          <button type="button" class="btn btn-outline-primary w-100" (click)="search()">Search</button>
+      </fieldset>
+    </form>
+    <div class="card my-3">
+      <div class="card-header text-center">PENDING GUIDE ALLOCATION</div>
+      <div class="p-2">
+        <table class="table table-hover">
+          <thead>
+            <tr class="table-primary">
+              <th scope="col">StudentId</th>
+              <th scope="col">Student Name</th>
+              <th scope="col">Department</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of filteredStudents; track student.id; let i = $index) {
+            <tr (click)="open(content, student.id)">
+              <td class="btn-link">
+                {{student.id}}
+              </td>
+              <td>
+                {{student.name}}
+              </td>
+              <td>{{ student.dept }}</td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" style="text-align: center">No students found</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <form [formGroup]="selectGuideForm">
+    <div class="modal-header">
+      <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex flex-column-reverse gap-3 flex-sm-row justify-content-between align-items-center">
+            <div class="flex-grow-1">
+              <p>Student Id: <span>{{selectedStudent?.id}}</span></p>
+              <p>Student Name: <span>{{selectedStudent?.name}}</span></p>
+              <p>Student Dept: <span>{{selectedStudent?.dept}}</span></p>
+            </div>
+            <div>
+              <img style="width: 80px; height: 100px;" [src]="selectedStudent?.imgUrl ?? 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'" alt={{selectedStudent?.name}} srcset="">
+            </div>
+          </div>
+        </div>
+        <div class="card-body d-flex gap-3 flex-column flex-md-row">
+          @for (guideData of selectedStudent?.pendingGuideAllocation; let idx = $index; track idx) {
+            <div (click)="radio.click()" class="card border-primary mb-3">
+              <div class="card-header bg-light-subtle text-primary d-flex justify-content-between">
+                {{"Guide Preference "+ (idx+1)}}
+                <div><input #radio formControlName="guide" class="form-check-input" type="radio" [value]="idx" name="guide"></div>
+              </div>
+              <img class="" [src]="guideData.imgUrl" alt={{guideData.name}}>
+              <div class="card-body">
+                <p class="p-0 m-0"><b>Name: </b> <span>{{guideData.name}}</span></p>
+                <p class="p-0 m-0"><b>Department: </b> <span>{{guideData.dept}}</span></p>
+                <p class="p-0 m-0"><b>Specilization: </b> <span>{{guideData.specialization}}</span></p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      @if (selectGuideForm.get("guide")?.invalid && (formSubmitted ||selectGuideForm.get("guide")?.touched)) {
+        <div class="text-danger">Choose Atleast One Guide</div>
+      }
+      <button type="submit" class="btn btn-outline-primary" (click)="allocateGuide()">Allocate</button>
+    </div>
+  </form>
+</ng-template>

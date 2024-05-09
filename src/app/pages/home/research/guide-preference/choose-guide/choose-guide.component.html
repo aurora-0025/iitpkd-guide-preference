@@ -1,0 +1,255 @@
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a class="text-decoration-none" [routerLink]="'/'">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a class="text-decoration-none" [routerLink]="'/research'">Research</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a
+        class="text-decoration-none"
+        [routerLink]="'/research/guide-preference'"
+        >Guide Preference</a
+      >
+    </li>
+    <li class="breadcrumb-item active text-primary" aria-current="page">
+      Choose Guide
+    </li>
+  </ol>
+</nav>
+
+<form class="container-fluid" (ngSubmit)="submit()" [formGroup]="researchForm">
+  <div class="row">
+    <div class="col-xs-6 col-sm-10 col-lg-8">
+      @for (groupName of formGroupNames; track formIndex; let formIndex =
+      $index) { @if (steps == formIndex + 1) {
+      <fieldset class="card p-3" formGroupName="{{ groupName }}">
+        <div class="row col-sm-12 mb-2">
+          <div class="row col-sm-12 mb-2 col-md-6 col-lg-8 m-0 p-0">
+            <div class="col-sm-4">
+              <label class="" for="department">Department:</label>
+            </div>
+            <div class="col">
+              <select
+                id="department"
+                class="form-select"
+                formControlName="dept"
+                (change)="onChangeDept($event, formIndex)"
+              >
+                @for (dept of dept_names; track dept.name) {
+                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                }
+              </select>
+              @if (researchForm.get(groupName)?.get("dept")?.invalid &&
+              (formSubmitted[formIndex] ||
+              researchForm.get(groupName)?.get("dept")?.touched ||
+              researchForm.get(groupName)?.get("dept")?.dirty)) {
+              <div class="text-danger">Required</div>
+              }
+            </div>
+          </div>
+          <div
+            class="col-sm-12 col-md-6 col-lg-4 order-md-2 d-flex justify-content-md-end"
+          >
+            <div class="form-check">
+              <label class="form-check-label" for="externalCheckbox">
+                External
+              </label>
+              <input
+                formControlName="external"
+                class="form-check-input"
+                type="checkbox"
+                id="externalCheckbox"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+          <div class="col-sm-4">
+            <label class="control-label" for="guide"
+              >Guide {{ formIndex + 1 }}:</label
+            >
+          </div>
+          <div class="col">
+            <div ngbDropdown #guideDropDown="ngbDropdown"  class="d-inline-block">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                id="dropdownForm1"
+                ngbDropdownToggle
+              >
+                {{
+                  researchForm.get(groupName)?.get("guide")?.value
+                    ? this.guides.at(
+                        researchForm.get(groupName)?.get("guide")?.value
+                      )?.name
+                    : "Choose Guide"
+                }}
+              </button>
+              <div
+                ngbDropdownMenu
+                aria-labelledby="dropdownForm"
+                style="
+                  max-height: 300px;
+                  overflow-y: scroll;
+                  overflow-x: hidden;
+                  padding: 0;
+                  margin: 0;
+                "
+              >
+                <div class="card">
+                  <form class="card-header">
+                    <div class="mb-3 row">
+                      <label
+                        for="table-filtering-search"
+                        class="col-xs-3 col-sm-3 col-form-label"
+                        >Search:</label
+                      >
+                      <div class="col-xs-3 col-sm-auto">
+                        <input
+                          id="table-filtering-search"
+                          class="form-control"
+                          type="text"
+                          [formControl]="filter"
+                        />
+                      </div>
+                    </div>
+                  </form>
+                  <div class="card-body">
+                    <table
+                      class="table table-hover table-bordered align-middle"
+                    >
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Dept Id</th>
+                          <th scope="col">Dept Name</th>
+                          <th scope="col">Specialization</th>
+                          <th scope="col">Profile Pic</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (guide of filteredGuides;
+                        track guide.id; let i = $index) { @if
+                        (selectedGuides.indexOf(guide.id) == -1 || guide.id ==
+                        selectedGuides[formIndex]) {
+                          <tr
+                          (click)="externalGuideSelected(guide.id, formIndex); guideDropDown.close()">
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>
+                              <ngb-highlight
+                                [result]="guide.name"
+                                [term]="filter.value"
+                              />
+                            </td>
+                            <td>
+                              <ngb-highlight
+                                [result]="guide.dept_id | number"
+                                [term]="filter.value"
+                              />
+                            </td>
+                            <td>
+                              <ngb-highlight
+                                [result]="guide.dept"
+                                [term]="filter.value"
+                              />
+                            </td>
+                            <td>
+                              {{ guide.specialization }}
+                            </td>
+                            <td>
+                              <img
+                                class="col-12"
+                                [src]="guide.imgUrl + '?u=' + guide.id"
+                                alt="{{ guide.name }}"
+                              />
+                            </td>
+                          </tr>
+                        } } @empty {
+                        <tr>
+                          <td colspan="4" style="text-align: center">
+                            No guides found
+                          </td>
+                        </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            @if (researchForm.get(groupName)?.get("guide")?.invalid &&
+            (formSubmitted[formIndex] ||
+            researchForm.get(groupName)?.get("guide")?.touched ||
+            researchForm.get(groupName)?.get("guide")?.dirty)) {
+            <div class="text-danger">Required</div>
+            }
+          </div>
+        </div>
+        <div class="row col-sm-12 mb-2 col-md-6 col-lg-8">
+          <div class="col-sm-4">
+            <label class="control-label col-sm-12" for="affiliation"
+              >Affiliation:</label
+            >
+          </div>
+          <div class="col">
+            <input
+              class="form-control"
+              id="affiliation"
+              formControlName="affiliation"
+              type="text"
+            />
+          </div>
+        </div>
+        <p>
+          * Select guide in the order of your preference guide 1 being your
+          first preference
+        </p>
+      </fieldset>
+      }} @if (steps == 4) {
+      <h2>Your Guide Preference</h2>
+      <div class="d-flex flex-column flex-md-row gap-2">
+        @for (name of formGroupNames; let idx = $index; track idx) {
+        <div class="card border-primary mb-3" style="max-width: 20rem">
+          <div class="card-header text-primary">
+            {{ "Guide Preference " + (idx + 1) }}
+          </div>
+          <img
+            class=""
+            [src]="getGuideData(idx)?.imgUrl"
+            alt="{{ getGuideData(idx)?.name }}"
+          />
+          <div class="card-body">
+            <p class="p-0 m-0">
+              <b>Name: </b> <span>{{ getGuideData(idx)?.name }}</span>
+            </p>
+            <p class="p-0 m-0">
+              <b>Department: </b> <span>{{ getGuideData(idx)?.dept }}</span>
+            </p>
+            <p class="p-0 m-0">
+              <b>Specilization: </b>
+              <span>{{ getGuideData(idx)?.specialization }}</span>
+            </p>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    <div
+      class="col d-flex mt-3 mt-sm-0 flex-sm-column flex-row align-items-center justify-content-center gap-2"
+    >
+      @if (steps != 1) {
+      <a class="btn btn-primary btn-lg" (click)="previous(steps)">Back</a>
+      } @if (steps != 4) {
+      <a class="btn btn-primary btn-lg" (click)="next(steps)">Next</a>
+      } @if (steps == 4) {
+      <button class="btn btn-primary btn-lg" type="button" (click)="save(); $event.preventDefault()">Save</button>
+      <button class="btn btn-primary btn-lg" type="button" (click)="submit(); $event.preventDefault()">Submit</button>
+      }
+    </div>
+  </div>
+</form>
